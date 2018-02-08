@@ -93,6 +93,7 @@ public:
 
 protected:
 	void processHexInsert();
+	SRString hexSymbol( int code );
 	void processDecompile();
 	bool nextQueue();
 
