@@ -23,7 +23,7 @@
 
 #include "SRString.hpp"
 
-enum eVarType{
+enum eVarType {
 	eVT_Int,
 	eVT_Float,
 	eVT_String,
@@ -39,31 +39,35 @@ enum eVarType{
 	eVT_Byte
 };
 
-struct stParams{
+struct stParams {
 	int count;
 	SRString opcode;
 };
 
-struct stOpcodeNumber{
+struct stOpcodeNumber {
 	int opcode;
 	bool isInvert;
 };
 
 template<typename T>
-bool delete_s(T ptr){
-	if (ptr == nullptr)
+bool delete_s( T ptr )
+{
+	if( ptr == nullptr )
 		return false;
+
 	delete[] ptr;
 	ptr = nullptr;
 	return true;
 }
 
 template<typename T>
-static bool hasInDeque(std::deque<T> &deq, const T &value){
-	for(auto it : deq)
-		if (it == value)
+static bool hasInDeque( std::deque<T> &deq, const T &value )
+{
+	for( auto it : deq )
+		if( it == value )
 			return true;
-		return false;
+
+	return false;
 }
 
 /**
@@ -72,59 +76,60 @@ static bool hasInDeque(std::deque<T> &deq, const T &value){
 class CleoDecompiler
 {
 public:
-    /**
-     * \brief Default constructor
+	/**
+	 * \brief Default constructor
 	 * \detail Load and parse SCM file
-     */
-	CleoDecompiler(SRString SCM = "SASCM.INI");
+	 */
+	CleoDecompiler( SRString SCM = "SASCM.INI" );
 
-    /**
-     * Destructor
-     */
-    ~CleoDecompiler();
-	
-	bool loadScript(SRString script);
-	
+	/**
+	 * Destructor
+	 */
+	~CleoDecompiler();
+
+	bool loadScript( SRString script );
+
 	SRStringList decompile();
-	
+
 protected:
 	void processHexInsert();
 	void processDecompile();
 	bool nextQueue();
-	
+
 public:
 	SRString readOpcode();
-	
+
 protected:
-	void pasteArgs(SRString & opcodeText, SRStringList &args);
-	SRStringList readArgs(unsigned short opcode);
+	void pasteArgs( SRString &opcodeText, SRStringList &args );
+	SRStringList readArgs( unsigned short opcode );
 	SRString readArg();
 	stOpcodeNumber readOpcodeNumber();
-	SRString read(int len);
+	SRString read( int len );
 	template<typename T>
-	T read(){
-		lastSize.push_back(sizeof(T));
-		T value = *(T*)((size_t)_script + _ip);
-		memset((void*)((size_t)_decompileMap + _ip), 1, lastSize.back());
+	T read()
+	{
+		lastSize.push_back( sizeof( T ) );
+		T value = *( T * )( ( size_t )_script + _ip );
+		memset( ( void * )( ( size_t )_decompileMap + _ip ), 1, lastSize.back() );
 		_ip += lastSize.back();
 		return value;
 	}
 	void undo();
-	
+
 public:
 	void setDefaultTypes();
-	void SetTypeId(int id, eVarType type);
-	eVarType Type(int id);
-	
+	void SetTypeId( int id, eVarType type );
+	eVarType Type( int id );
+
 	std::map<unsigned short, stParams> paramsData();
 
 private:
 	std::deque<int>lastSize; // Размер прочтенного блока
 	std::map<unsigned short, stParams> _params; // [опкод] = параметры
 	std::map<int, eVarType> _types; // [id типа] = тип
-    std::deque<int> _queue; // Очередь веток
-    int _ip; // текущая позиция
-    int _size; // Размер скрипта
+	std::deque<int> _queue; // Очередь веток
+	int _ip; // текущая позиция
+	int _size; // Размер скрипта
 	unsigned char *_script; // Скрипт
 	unsigned char *_decompileMap; // Карта скрипта. 1 - декомпилированный участок, 0 - не декомпилированный
 	std::deque<int> _labels; // адреса меток
