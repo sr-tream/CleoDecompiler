@@ -261,6 +261,8 @@ bool CleoDecompiler::nextQueue()
 
 SRString CleoDecompiler::readOpcode()
 {
+	const std::regex reDec( R"(\d+)", std::regex::icase );
+	
 	auto opcode = readOpcodeNumber();
 	stParams params;
 
@@ -275,10 +277,12 @@ SRString CleoDecompiler::readOpcode()
 	auto args = readArgs( opcode.opcode );
 
 	if( opcode.opcode == 0x0002 ) { // jump
-		auto label = args.front().toInt() * -1;
+		if (args.front().indexIn(reDec) == eRe_matched){
+			auto label = args.front().toInt() * -1;
 
-		if( _decompileMap[label] == 0 )
-			_ip = label;
+			if( _decompileMap[label] == 0 )
+				_ip = label;
+		}
 	}
 	else if( opcode.opcode == 0x0D6 ) { // if
 		auto t = args.front().toInt();
@@ -303,13 +307,15 @@ SRString CleoDecompiler::readOpcode()
 
 void CleoDecompiler::pasteArgs( SRString &opcodeText, SRStringList &args )
 {
+	const std::regex reDec( R"(\d+)", std::regex::icase );
 	SRString re = "(\%1\\w\%)";
+	SRString rePoint = R"(\d+p)";
 	int i = 1;
 
 	while( opcodeText.indexIn( re ) ) {
 		auto argId = opcodeText.cap( 1 );
 
-		if( argId.indexIn( R"(\d+p)" ) ) {
+		if( argId.indexIn( rePoint ) && args.front().indexIn(reDec) == eRe_matched ) {
 			int label = args.front().toInt() * -1;
 
 			if( _decompileMap[label] == 0 )
