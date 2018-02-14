@@ -100,13 +100,14 @@ SRStringList CleoDecompiler::decompile()
 	return ret;
 }
 
-void CleoDecompiler::processHexInsert() // BUG: Проблемы с корявым отображением сиволов в комментарии (пример с баннихопом)
+void CleoDecompiler::processHexInsert()
 {
 	int start = -1;
 	SRString opcode;
 	std::function<void( int, int )> comment =
 	[this, &opcode]( int i, int j ) {
 		opcode += "// ";
+		++j;
 
 		for( int k = i - j; k < i; ++k )
 			opcode += hexSymbol( ( int )_script[k] );
