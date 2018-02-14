@@ -100,7 +100,7 @@ SRStringList CleoDecompiler::decompile()
 	return ret;
 }
 
-void CleoDecompiler::processHexInsert()
+void CleoDecompiler::processHexInsert() // BUG: Проблемы с корявым отображением сиволов в комментарии (пример с баннихопом)
 {
 	int start = -1;
 	SRString opcode;
@@ -475,7 +475,7 @@ eVarType CleoDecompiler::Type( int id )
 	return _types[id];
 }
 
-std::map<unsigned short, stParams> CleoDecompiler::paramsData()
+std::unordered_map<unsigned short, stParams> CleoDecompiler::paramsData()
 {
 	return _params;
 } 

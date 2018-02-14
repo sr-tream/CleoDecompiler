@@ -20,6 +20,7 @@
 #define CLEODECOMPILER_H
 
 #include <map>
+#include <unordered_map>
 
 #include "SRString.hpp"
 
@@ -122,12 +123,12 @@ public:
 	void SetTypeId( int id, eVarType type );
 	eVarType Type( int id );
 
-	std::map<unsigned short, stParams> paramsData();
+	std::unordered_map<unsigned short, stParams> paramsData();
 
 private:
 	std::deque<int>lastSize; // Размер прочтенного блока
-	std::map<unsigned short, stParams> _params; // [опкод] = параметры
-	std::map<int, eVarType> _types; // [id типа] = тип
+	std::unordered_map<unsigned short, stParams> _params; // [опкод] = параметры
+	std::unordered_map<int, eVarType> _types; // [id типа] = тип
 	std::deque<int> _queue; // Очередь веток
 	int _ip; // текущая позиция
 	int _size; // Размер скрипта
